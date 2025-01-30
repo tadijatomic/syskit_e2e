@@ -14,7 +14,7 @@ test("Adele cannot delete Chronos team", async ({ page }) => {
   }
 
   await page.goto("https://syskit-point-e2e-task-2025.syskit365demo.com/");
-  await page.click('button:has-text("Sign in")', { force: true });
+  await page.click('button:has-text("Sign in")');
 
   await page.fill("#i0116", usermail);
   await page.click("#idSIButton9");
@@ -43,4 +43,28 @@ test("Adele cannot delete Chronos team", async ({ page }) => {
 
   const deleteButton = await popup.locator('button:has-text("Delete")');
   await deleteButton.click();
+
+  const checkDetailsLink = await page.locator(
+    'div.message a:has-text("Check details")'
+  );
+  await expect(checkDetailsLink).toBeVisible({ timeout: 10000 });
+  checkDetailsLink.click();
+
+  const headerColumns = await page.locator(".table-header .table-column");
+
+  const firstColumnText = await headerColumns.nth(1).textContent();
+
+  expect(firstColumnText).toContain("Status");
+
+  const rows = await page.locator(".table-body .table-row");
+
+  const firstRowJobDetailsText = await rows
+    .nth(0)
+    .locator(".table-column")
+    .nth(1)
+    .textContent();
+
+  expect(firstRowJobDetailsText).toContain(
+    "Cannot delete site because current user is not a site owner."
+  );
 });
