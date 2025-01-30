@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import dotenv from "dotenv";
 import { LoginPage } from "../page_objects/LoginPage";
 import { Helpers } from "../helpers";
+import { ActionDetailsPage } from "../page_objects/ActionDetailsPage";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ test("Adele cannot delete Chronos team", async ({ page }) => {
   const deleteTextUpper = deleteText.toUpperCase();
   const loginPage = new LoginPage(page);
   const helpers = new Helpers(page);
+  const actionDetailsPage = new ActionDetailsPage(page);
 
   if (!usermail || !password) {
     throw new Error("Username or password is missing");
@@ -57,21 +59,13 @@ test("Adele cannot delete Chronos team", async ({ page }) => {
   await expect(checkDetailsLink).toBeVisible({ timeout: 10000 });
   checkDetailsLink.click();
 
-  const headerColumns = await page.locator(".table-header .table-column");
+  actionDetailsPage.getStatusColumnHeaderText();
 
-  const statusColumn = await headerColumns.nth(1).textContent();
+  actionDetailsPage.getFirstRowStatusText();
 
-  expect(statusColumn).toContain("Status");
+  actionDetailsPage.verifyStatusColumnHeader();
 
-  const rows = await page.locator(".table-body .table-row");
-
-  const firstRowStatusText = await rows
-    .nth(0)
-    .locator(".table-column")
-    .nth(1)
-    .textContent();
-
-  expect(firstRowStatusText).toContain(
+  actionDetailsPage.verifyFirstRowStatus(
     "Cannot delete site because current user is not a site owner."
   );
 });

@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import dotenv from "dotenv";
 import { LoginPage } from "../page_objects/LoginPage";
 import { Helpers } from "../helpers";
+import { ActionDetailsPage } from "../page_objects/ActionDetailsPage";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ test("Adele cannot add user to group", async ({ page }) => {
   const groupName: string = "Deep";
   const loginPage = new LoginPage(page);
   const helpers = new Helpers(page);
+  const actionDetailsPage = new ActionDetailsPage(page);
 
   if (!usermail || !password) {
     throw new Error("Username or password is missing");
@@ -60,4 +62,14 @@ test("Adele cannot add user to group", async ({ page }) => {
     .locator('div.progress-notification__text a:has-text("Check details")')
     .nth(0)
     .click();
+
+  actionDetailsPage.getStatusColumnHeaderText();
+
+  actionDetailsPage.getFirstRowStatusText();
+
+  actionDetailsPage.verifyStatusColumnHeader();
+
+  actionDetailsPage.verifyFirstRowStatus(
+    "Error: Insufficient privileges to complete the operation."
+  );
 });
