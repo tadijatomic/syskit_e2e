@@ -52,19 +52,19 @@ test("Adele cannot delete Chronos team", async ({ page }) => {
 
   const headerColumns = await page.locator(".table-header .table-column");
 
-  const firstColumnText = await headerColumns.nth(1).textContent();
+  const statusColumn = await headerColumns.nth(1).textContent();
 
-  expect(firstColumnText).toContain("Status");
+  expect(statusColumn).toContain("Status");
 
   const rows = await page.locator(".table-body .table-row");
 
-  const firstRowJobDetailsText = await rows
+  const firstRowStatusText = await rows
     .nth(0)
     .locator(".table-column")
     .nth(1)
     .textContent();
 
-  expect(firstRowJobDetailsText).toContain(
+  expect(firstRowStatusText).toContain(
     "Cannot delete site because current user is not a site owner."
   );
 });
