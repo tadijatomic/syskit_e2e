@@ -1,6 +1,9 @@
 import { test, expect } from "@playwright/test";
 import dotenv from "dotenv";
-
+import { LoginPage } from "../page_objects/LoginPage";
+import { Sidebar } from "../page_objects/Sidebar";
+import { Helpers } from "../helpers";
+Helpers;
 dotenv.config();
 
 test("Adele cannot delete Chronos team", async ({ page }) => {
@@ -8,25 +11,31 @@ test("Adele cannot delete Chronos team", async ({ page }) => {
   const password = process.env.PASSWORD;
   const deleteText: string = "delete";
   const deleteTextUpper = deleteText.toUpperCase();
+  const loginPage = new LoginPage(page);
+  const sidebarMenu = new Sidebar(page);
+  const helpers = new Helpers(page);
 
   if (!usermail || !password) {
     throw new Error("Username or password is missing");
   }
 
-  await page.goto("https://syskit-point-e2e-task-2025.syskit365demo.com/");
+  LoginPage.validateLoginData(usermail, password);
+
+  await loginPage.goToPage();
+
   await page.click('button:has-text("Sign in")');
 
-  await page.fill("#i0116", usermail);
-  await page.click("#idSIButton9");
+  await loginPage.enterEmail(usermail);
+  await loginPage.submitLogin();
 
-  await page.fill("#i0118", password);
-  await page.click("#idSIButton9");
+  await loginPage.enterPassword(password);
+  await loginPage.submitLogin();
 
   await page.click("#idBtn_Back");
 
-  await page.click('span.navigation__item-name:has-text("Teams & Groups")');
+  await sidebarMenu.sidebarItem("Teams & Groups");
 
-  await page.fill('[aria-label="Search in the data grid"]', "Chronos");
+  helpers.searchByValue("Chronos");
 
   const row = await page.locator('table tr:has-text("Chronos")').last();
   await row.click();
