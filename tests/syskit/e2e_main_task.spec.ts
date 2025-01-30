@@ -1,9 +1,8 @@
 import { test, expect } from "@playwright/test";
 import dotenv from "dotenv";
 import { LoginPage } from "../page_objects/LoginPage";
-import { Sidebar } from "../page_objects/Sidebar";
 import { Helpers } from "../helpers";
-Helpers;
+
 dotenv.config();
 
 test("Adele cannot delete Chronos team", async ({ page }) => {
@@ -12,7 +11,6 @@ test("Adele cannot delete Chronos team", async ({ page }) => {
   const deleteText: string = "delete";
   const deleteTextUpper = deleteText.toUpperCase();
   const loginPage = new LoginPage(page);
-  const sidebarMenu = new Sidebar(page);
   const helpers = new Helpers(page);
 
   if (!usermail || !password) {
@@ -33,9 +31,9 @@ test("Adele cannot delete Chronos team", async ({ page }) => {
 
   await page.click("#idBtn_Back");
 
-  await sidebarMenu.sidebarItem("Teams & Groups");
+  await helpers.sidebarItem("Teams & Groups");
 
-  helpers.searchByValue("Chronos");
+  await helpers.searchByValue("Chronos");
 
   const row = await page.locator('table tr:has-text("Chronos")').last();
   await row.click();

@@ -13,8 +13,8 @@ export class LoginPage {
     );
   }
 
-  async enterEmail(email: string) {
-    await this.page.fill("#i0116", email);
+  async enterEmail(usermail: string) {
+    await this.page.fill("#i0116", usermail);
   }
 
   async enterPassword(password: string) {
